@@ -1,0 +1,7 @@
+{
+  "name": "aid-print",
+  "standard": "PDF/X-4:2010",
+  "colorConversion": "Convert to Destination (Preserve Numbers)",
+  "profileInclusion": "Don't Include Profiles",
+  "useDocumentBleed": true
+}

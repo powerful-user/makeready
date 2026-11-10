@@ -1,0 +1,5 @@
+fonts:
+  Nimbus Sans/Regular: {family: Nimbus Sans, style: Regular, file: NimbusSans-Regular.otf}
+  Nimbus Sans/Bold: {family: Nimbus Sans, style: Bold, file: NimbusSans-Bold.otf}
+  Nimbus Sans/Italic: {family: Nimbus Sans, style: Italic, file: NimbusSans-Italic.otf}
+  Nimbus Sans/Bold Italic: {family: Nimbus Sans, style: Bold Italic, file: NimbusSans-BoldItalic.otf}

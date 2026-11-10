@@ -1,0 +1,14 @@
+swatches:
+  - name: Brand Orange
+    hex: "#F26B21"
+    cmyk: [0, 70, 95, 0]
+    pantone: PANTONE 1585 C
+    spot: false
+  - name: Brand Blue
+    hex: "#0055A5"
+    cmyk: [100, 60, 0, 5]
+    pantone: PANTONE 2935 C
+    spot: true
+  - name: Ink
+    hex: "#1A1A1A"
+    cmyk: [0, 0, 0, 90]

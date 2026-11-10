@@ -1,0 +1,14 @@
+{
+  "META-INF/": null,
+  "MasterSpreads/": "MasterSpreads/MasterSpread.rnc",
+  "Resources/Fonts.xml": "Resources/Fonts.rnc",
+  "Resources/Graphic.xml": "Resources/Graphic.rnc",
+  "Resources/Preferences.xml": "Resources/Preferences.rnc",
+  "Resources/Styles.xml": "Resources/Styles.rnc",
+  "Spreads/": "Spreads/Spread.rnc",
+  "Stories/": "Stories/Story.rnc",
+  "XML/BackingStory.xml": "XML/BackingStory.rnc",
+  "XML/Mapping.xml": "XML/Mapping.rnc",
+  "XML/Tags.xml": "XML/Tags.rnc",
+  "designmap.xml": "designmap.rnc"
+}
