@@ -3,6 +3,7 @@
 import argparse
 import json
 import os
+import shutil
 import sys
 from datetime import date
 from pathlib import Path
@@ -10,9 +11,11 @@ from pathlib import Path
 from makeready import __version__
 from makeready.approve import ApproveError, approve, mac_reset, open_pdf
 from makeready.build import BuildFailed, build
-from makeready.config import ConfigError, load, token_warning
+from makeready.config import ConfigError, load, require_mac, token_warning
 from makeready.figma import FigmaClient, FigmaError
+from makeready.idml.validate import JING_MISSING
 from makeready.importer import import_figma
+from makeready.init import InitError, init
 from makeready.mac import MacError, MacUnreachable
 from makeready.macsetup import bootstrap
 from makeready.proof import make_proof
@@ -26,6 +29,8 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--repo", default=".")
     parser.add_argument("--version", action="store_true")
     commands = parser.add_subparsers(dest="command")
+    init_command = commands.add_parser("init")
+    init_command.add_argument("directory")
     mac = commands.add_parser("mac")
     mac_commands = mac.add_subparsers(dest="mac_command")
     mac_commands.add_parser("check")
@@ -59,12 +64,14 @@ def main(argv: list[str] | None = None) -> int:
     except MacUnreachable as error:
         print(f"Mac unreachable: {error}", file=sys.stderr)
         return 2
-    except (ConfigError, MacError, FigmaError, ValueError, SpecError, Busy) as error:
+    except (ConfigError, InitError, MacError, FigmaError, ValueError, SpecError, Busy) as error:
         print(error, file=sys.stderr)
         return 2
 
 
 def _dispatch(args: argparse.Namespace) -> int:
+    if args.command == "init":
+        return _init(args)
     if args.command == "import-figma":
         return _import_figma(args)
     if args.command == "build":
@@ -81,7 +88,8 @@ def _dispatch(args: argparse.Namespace) -> int:
         return _mac_reset(args)
     if args.command != "mac" or args.mac_command not in ("check", "bootstrap"):
         return 2
-    cfg = load()
+    cfg = load(repo=Path(args.repo))
+    require_mac(cfg)
     ssh = os.environ.get("MAKEREADY_SSH", "ssh")
     rsync = os.environ.get("MAKEREADY_RSYNC", "rsync")
     if args.mac_command == "check":
@@ -95,8 +103,18 @@ def _dispatch(args: argparse.Namespace) -> int:
     return 0
 
 
+def _init(args: argparse.Namespace) -> int:
+    target = Path(args.directory)
+    init(target)
+    print(f"created {target}")
+    print(f"next: makeready --repo {target} build example")
+    if shutil.which("jing") is None:
+        print(JING_MISSING, file=sys.stderr)
+    return 0
+
+
 def _import_figma(args: argparse.Namespace) -> int:
-    cfg = load()
+    cfg = load(repo=Path(args.repo))
     client = FigmaClient(cfg.figma_token)
     warning = token_warning(cfg, date.today())
     if warning:
@@ -122,7 +140,7 @@ def _import_figma(args: argparse.Namespace) -> int:
 
 def _build(args: argparse.Namespace) -> int:
     try:
-        cfg = load()
+        cfg = load(repo=Path(args.repo))
     except OSError as error:
         print(error, file=sys.stderr)
         return 2
@@ -188,7 +206,7 @@ def _build_one(repo: Path, cfg, series: str, doc: str, reopen: bool) -> int:
 
 
 def _render(args: argparse.Namespace) -> int:
-    cfg = _loaded()
+    cfg = _loaded(args)
     if cfg is None:
         return 2
     repo = Path(args.repo)
@@ -252,7 +270,7 @@ def _proof(args: argparse.Namespace) -> int:
 
 
 def _approve(args: argparse.Namespace) -> int:
-    cfg = _loaded()
+    cfg = _loaded(args)
     if cfg is None:
         return 2
     repo = Path(args.repo)
@@ -271,7 +289,7 @@ def _approve(args: argparse.Namespace) -> int:
 
 
 def _open(args: argparse.Namespace) -> int:
-    cfg = _loaded()
+    cfg = _loaded(args)
     if cfg is None:
         return 2
     series, doc, problem = _one_target(args.target, "open")
@@ -284,7 +302,7 @@ def _open(args: argparse.Namespace) -> int:
 
 
 def _mac_reset(args: argparse.Namespace) -> int:
-    cfg = _loaded()
+    cfg = _loaded(args)
     if cfg is None:
         return 2
     ssh, _rsync = _transport()
@@ -357,12 +375,14 @@ def _reference_dir(repo: Path, template: str) -> Path | None:
     return folder
 
 
-def _loaded():
+def _loaded(args: argparse.Namespace):
     try:
-        return load()
+        cfg = load(repo=Path(args.repo))
     except OSError as error:
         print(error, file=sys.stderr)
         return None
+    require_mac(cfg)
+    return cfg
 
 
 def _transport() -> tuple[str, str]:

@@ -1,0 +1,28 @@
+{
+  "name": "flyer",
+  "scale": 1.0,
+  "bleed": 9,
+  "pages": [
+    {
+      "name": "Flyer", "width": 612, "height": 792,
+      "elements": [
+        {"id": "photo:hero", "kind": "image", "slot": "photo:hero",
+         "transform": [1, 0, 0, 1, -9, -9], "width": 630, "height": 459,
+         "fill": null, "stroke": null},
+        {"id": "Band", "kind": "shape", "shape": "rect",
+         "transform": [1, 0, 0, 1, -9, 450], "width": 630, "height": 18,
+         "fill": {"swatch": "Accent", "opacity": 1}, "stroke": null},
+        {"id": "headline", "kind": "text", "slot": "headline",
+         "transform": [1, 0, 0, 1, 36, 492], "width": 540, "height": 72,
+         "fill": {"swatch": "Ink", "opacity": 1}, "stroke": null,
+         "text": {"characters": "Headline", "font": "Liberation Sans/Bold", "size": 48, "tracking": -10,
+                  "leading": 56, "align": "left", "valign": "top", "auto_height": false}},
+        {"id": "body", "kind": "text", "slot": "body",
+         "transform": [1, 0, 0, 1, 36, 576], "width": 540, "height": 168,
+         "fill": {"swatch": "Ink", "opacity": 1}, "stroke": null,
+         "text": {"characters": "Body", "font": "Liberation Sans/Regular", "size": 16, "tracking": 0,
+                  "leading": 22, "align": "left", "valign": "top", "auto_height": false}}
+      ]
+    }
+  ]
+}

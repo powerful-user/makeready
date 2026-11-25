@@ -12,12 +12,11 @@ from pathlib import Path
 from makeready.checks import Finding, run
 from makeready.idml.document import compile_document
 from makeready.idml.package import write_package
-from makeready.idml.validate import validate as validate_idml
+from makeready.idml.validate import JING_MISSING, validate as validate_idml
 from makeready.manifest import build_id, compute
 from makeready.spec import SpecError, load_template, resolve, validate as validate_spec
 
 _BUILD_ID = re.compile(r"^[0-9a-f]{16}$")
-_JING_MISSING = "install jing: sudo apt install jing"
 
 
 class BuildFailed(Exception):
@@ -136,8 +135,8 @@ def _write_new(repo, cfg, resolved, template, findings, manifest, dest: Path, id
 
 
 def _io_failure(findings, path: Path, error: OSError) -> None:
-    if str(error) == _JING_MISSING:
-        raise BuildFailed(findings, [_JING_MISSING]) from error
+    if str(error) == JING_MISSING:
+        raise BuildFailed(findings, [JING_MISSING]) from error
     raise BuildFailed(findings, [f"{path}: {error}"]) from error
 
 

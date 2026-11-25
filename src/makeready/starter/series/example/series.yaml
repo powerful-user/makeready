@@ -1,0 +1,14 @@
+template: flyer
+defaults:
+  slots:
+    body: copy/body.md
+    photo:hero: {src: hero.jpg, fit: fill, focus: [0.5, 0.5]}
+variants:
+  - doc: open-house
+    slots:
+      headline: Open House, April 12
+  - doc: garden
+    slots:
+      headline: Garden Party
+    overrides:
+      headline: {size: 54}

@@ -5,7 +5,7 @@ from makeready.colour import Swatch
 from makeready.idml.package import read_part
 from makeready.idml.resources import ParaStyle, fmt, fonts_xml, graphic_xml, styles_xml
 
-SEED = Path(__file__).resolve().parents[1] / "seed" / "reference.idml"
+SEED = Path(__file__).resolve().parents[1] / "src" / "makeready" / "starter" / "seed" / "reference.idml"
 ORANGE = Swatch("Brand Orange", "#F26B21", (0, 70, 95, 0), False, "PANTONE 1585 C")
 BLUE = Swatch("Brand Blue", "#0055A5", (100, 60, 0, 5), True, "PANTONE 2935 C")
 

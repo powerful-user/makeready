@@ -4,7 +4,7 @@ from pathlib import Path
 
 import makeready  # noqa: F401  (the red fails here until the package exists)
 
-MAC = Path(__file__).resolve().parents[1] / "mac"
+MAC = Path(__file__).resolve().parents[1] / "src" / "makeready" / "starter" / "mac"
 NOT_ES3 = [
     r"\blet\s", r"\bconst\s", r"=>", r"`", r"\.forEach\(", r"\.trim\(\)", r"\bclass\s", r"\bJSON\.",
     r"\.map\(", r"\.filter\(", r"\.reduce\(", r"\.some\(", r"\.every\(", r"\bObject\.keys\(",

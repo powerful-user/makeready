@@ -8,14 +8,15 @@ from makeready.config import Config
 TESTS = Path(__file__).resolve().parent
 ROOT = TESTS.parent
 FIXTURES = TESTS / "fixtures"
+STARTER = ROOT / "src" / "makeready" / "starter"
 
 
 def make_repo(tmp_path, real_seed=False):
     repo = tmp_path / "repo"
     shutil.copytree(FIXTURES / "repo", repo)
     if real_seed:
-        shutil.copytree(ROOT / "seed", repo / "seed")
-        shutil.copytree(ROOT / "mac", repo / "mac")
+        shutil.copytree(STARTER / "seed", repo / "seed")
+        shutil.copytree(STARTER / "mac", repo / "mac")
     else:
         (repo / "seed").mkdir()
         (repo / "seed" / "reference.idml").write_bytes(b"seed")
