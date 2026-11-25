@@ -1,0 +1,12 @@
+# Settings for this makeready project. Paths are relative to this file.
+
+[mac]
+# Only rendering and packaging need a Mac with InDesign. To use one, set host
+# to user@address and home to that user's home folder, then run
+# `makeready mac bootstrap`. Building works with host left empty.
+host = ""
+home = "/Users/you"
+
+[assets]
+photos = "photos"
+fonts = "fonts"

@@ -1,0 +1,7 @@
+swatches:
+  - name: Ink
+    hex: "#1A1A1A"
+    cmyk: [0, 0, 0, 90]
+  - name: Accent
+    hex: "#E4572E"
+    cmyk: [0, 78, 88, 0]

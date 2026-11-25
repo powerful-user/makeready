@@ -1,14 +1,33 @@
 [project]
 name = "makeready"
 version = "0.1.0"
-description = "Compile Figma templates and YAML specs into InDesign documents and print PDFs"
+description = "Describe a print layout in plain files and compile it to a native InDesign document, no InDesign needed"
+readme = "README.md"
+license = "MIT AND OFL-1.1"
+license-files = ["LICENSE", "src/makeready/starter/fonts/OFL.txt"]
 requires-python = ">=3.12"
+keywords = ["indesign", "idml", "print", "prepress", "layout", "agent"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "Topic :: Multimedia :: Graphics",
+    "Topic :: Printing",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+]
 dependencies = [
     "pyyaml>=6",
     "fonttools>=4.50",
     "pillow>=10",
     "pikepdf>=10.17.0",
 ]
+
+[project.urls]
+Repository = "https://github.com/powerful-user/makeready"
+Issues = "https://github.com/powerful-user/makeready/issues"
 
 [project.scripts]
 makeready = "makeready.cli:main"

@@ -10,6 +10,7 @@ from pathlib import Path
 from makeready.idml.package import aid_instruction
 
 _MISSING = object()
+JING_MISSING = "makeready needs jing to validate builds: sudo apt install jing, or brew install jing-trang on a Mac"
 
 
 def validate(idml: Path, schema_dir: Path, jing: str = "jing") -> list[str]:
@@ -142,7 +143,7 @@ def _jing(jing: str, schema: str, schema_path: Path, name: str, part: Path) -> l
     try:
         result = subprocess.run(command, capture_output=True, timeout=60)
     except FileNotFoundError:
-        raise FileNotFoundError("install jing: sudo apt install jing") from None
+        raise FileNotFoundError(JING_MISSING) from None
     except subprocess.TimeoutExpired:
         return [f"{name}: jing timed out"]
     except OSError as error:

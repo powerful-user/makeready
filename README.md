@@ -18,7 +18,7 @@ The agent writes the same template and spec files, runs the same commands and sh
 
 makeready is made to be driven this way. Every command runs without prompts and reports in plain text, the inputs are files an agent can read and diff, the same inputs always give the same build, and the pre-print checks catch mistakes before anyone opens InDesign. When a job needs something the compiler doesn't write yet, the agent can add it in a `hooks.py` beside the template, which the build runs for every frame it writes.
 
-The `makeready` agent skill, kept in [powerful-user/skills](https://github.com/powerful-user/skills), teaches an agent this workflow: ask about missing measurements, preview before building, read the build back and check it against the brief. [Setup](#setup) shows how to add it to your agent.
+The `makeready-indesign` agent skill, kept in [powerful-user/skills](https://github.com/powerful-user/skills), teaches an agent this workflow: ask about missing measurements, preview before building, read the build back and check it against the brief. [Setup](#setup) shows how to add it to your agent.
 
 ### By hand
 
@@ -83,6 +83,7 @@ A target is `series/doc`, or a whole series for `build` and `render`.
 
 | Command | What it does |
 |---|---|
+| `makeready init <folder>` | Create a starter project that builds without a Mac |
 | `makeready import-figma <file-key> --name <template>` | Read a Figma file into a template; a re-import keeps keys set by hand, such as `hooks` and `bleed` |
 | `makeready build <target>` | Compile to IDML with links and fonts |
 | `makeready render <target>` | Open the build in InDesign on the Mac and export a print PDF |
@@ -94,24 +95,28 @@ A target is `series/doc`, or a whole series for `build` and `render`.
 
 ## Setup
 
-Needs Python 3.12 and [uv](https://docs.astral.sh/uv/). Rendering needs a Mac with desktop InDesign, reachable over SSH with Remote Login on.
+Needs [uv](https://docs.astral.sh/uv/) and [jing](https://relaxng.org/jclark/jing.html), which checks every build against InDesign's schema (`sudo apt install jing`, or `brew install jing-trang` on a Mac). Start a project and build its example flyers, with no InDesign and no setup:
 
 ```
-git clone https://github.com/powerful-user/makeready
-cd makeready
-uv sync
-uv run makeready --version
+uvx --from git+https://github.com/powerful-user/makeready makeready init my-job
+uvx --from git+https://github.com/powerful-user/makeready makeready --repo my-job build example
 ```
 
-To have your agent drive it, add the makeready skill:
+The files land in `my-job/build/example/`. For regular use, `uv tool install git+https://github.com/powerful-user/makeready` puts `makeready` on your path.
+
+To have your agent drive it, add the skill:
 
 ```
-npx skills add powerful-user/skills --skill makeready
+npx skills add powerful-user/skills --skill makeready-indesign
 ```
 
-The skill teaches the agent the workflow; the agent still runs `makeready` from the clone above.
+The skill teaches the agent the workflow, and how to install `makeready` if it isn't there.
 
-Configuration lives in `~/.config/makeready/config.toml`, outside git: the Figma token, the Mac's host and home folder, where photos and fonts live, and the print profile and inks. On the Mac, jobs, fonts and scripts live under `~/makeready/`.
+Settings live in `makeready.toml` in the project, which `init` writes: where photos and fonts live, and the Mac's host and home folder. To share settings across projects, use `~/.config/makeready/config.toml` instead, or name a file with `MAKEREADY_CONFIG`. That is also where the Figma token, print profile and inks go.
+
+Rendering needs a Mac with desktop InDesign, reachable over SSH with Remote Login on. Set `[mac] host` and `home`, then run `makeready mac bootstrap`. On the Mac, jobs, fonts and scripts live under `~/makeready/`.
+
+The starter project's fonts are Liberation Sans, under the SIL Open Font License. Everything else is MIT.
 
 ## Status
 

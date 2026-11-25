@@ -7,6 +7,7 @@ from datetime import date, datetime
 from pathlib import Path
 
 _PROCESS = ("C", "M", "Y", "K")
+PROJECT_FILE = "makeready.toml"
 
 
 class ConfigError(Exception):
@@ -37,10 +38,19 @@ def _typed(path: Path, data: dict, section: str, key: str, kind: type, what: str
     return value
 
 
-def load(path: Path | None = None) -> Config:
+def load(path: Path | None = None, repo: Path | None = None) -> Config:
+    """Read settings from `path`, $MAKEREADY_CONFIG, the project's file or the user's, first found."""
+    base = None
     if path is None:
         env = os.environ.get("MAKEREADY_CONFIG")
-        path = Path(env) if env else Path("~/.config/makeready/config.toml")
+        project = Path(repo) / PROJECT_FILE if repo is not None else None
+        if env:
+            path = Path(env)
+        elif project is not None and project.is_file():
+            path = project
+            base = project.parent.resolve()
+        else:
+            path = Path("~/.config/makeready/config.toml")
     path = Path(path).expanduser()
     if not path.is_file():
         raise ConfigError(f"{path}: file not found")
@@ -76,12 +86,23 @@ def load(path: Path | None = None) -> Config:
         figma_token_expires=expires,
         mac_host=_typed(path, data, "mac", "host", str, "text"),
         mac_home=str(Path(_typed(path, data, "mac", "home", str, "text")).expanduser()),
-        photos=Path(_typed(path, data, "assets", "photos", str, "text")).expanduser(),
-        fonts=Path(_typed(path, data, "assets", "fonts", str, "text")).expanduser(),
+        photos=_folder(_typed(path, data, "assets", "photos", str, "text"), base),
+        fonts=_folder(_typed(path, data, "assets", "fonts", str, "text"), base),
         print_profile=_typed(path, data, "print", "profile", str, "text", "GRACoL2013_CRPC6"),
         print_inks=tuple(inks),
         cache_dir=Path(_typed(path, data, "cache", "dir", str, "text", "~/.cache/makeready")).expanduser(),
     )
+
+
+def _folder(value: str, base: Path | None) -> Path:
+    folder = Path(value).expanduser()
+    return base / folder if base is not None else folder
+
+
+def require_mac(cfg: Config) -> None:
+    """Stop a command that needs the Mac when none is configured."""
+    if not cfg.mac_host:
+        raise ConfigError(f"no Mac configured: set [mac] host and home in {PROJECT_FILE}")
 
 
 def token_warning(cfg: Config, today: date) -> str | None:

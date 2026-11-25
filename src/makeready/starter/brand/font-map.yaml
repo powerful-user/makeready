@@ -1,0 +1,5 @@
+fonts:
+  Liberation Sans/Regular: {family: Liberation Sans, style: Regular, file: LiberationSans-Regular.ttf}
+  Liberation Sans/Bold: {family: Liberation Sans, style: Bold, file: LiberationSans-Bold.ttf}
+  Liberation Sans/Italic: {family: Liberation Sans, style: Italic, file: LiberationSans-Italic.ttf}
+  Liberation Sans/Bold Italic: {family: Liberation Sans, style: Bold Italic, file: LiberationSans-BoldItalic.ttf}

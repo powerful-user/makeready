@@ -6,7 +6,7 @@ from pathlib import Path
 
 import makeready  # noqa: F401  (the red fails here until the package exists)
 
-SEED = Path(__file__).resolve().parents[1] / "seed"
+SEED = Path(__file__).resolve().parents[1] / "src" / "makeready" / "starter" / "seed"
 
 
 def schema_for(mapping, name):
@@ -71,4 +71,4 @@ def test_mac_facts():
 
 
 def test_jing_installed():
-    assert shutil.which("jing"), "install jing: sudo apt install jing"
+    assert shutil.which("jing"), "install jing: sudo apt install jing, or brew install jing-trang"

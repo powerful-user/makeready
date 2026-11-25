@@ -3,7 +3,7 @@ from pathlib import Path
 
 import makeready  # noqa: F401  (the red fails here until the package exists)
 
-MAC = Path(__file__).resolve().parents[1] / "mac"
+MAC = Path(__file__).resolve().parents[1] / "src" / "makeready" / "starter" / "mac"
 
 
 def test_render_script():

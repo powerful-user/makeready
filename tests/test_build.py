@@ -8,11 +8,11 @@ import zipfile
 from pathlib import Path
 
 import pytest
-from fixture_repo import ROOT, make_config, make_repo, write_config
+from fixture_repo import STARTER, make_config, make_repo, write_config
 
 from makeready.build import BuildFailed, _copy_file, _copy_files, _point_latest, _write_text, build
 from makeready.cli import main
-from makeready.idml.validate import validate
+from makeready.idml.validate import JING_MISSING, validate
 from makeready.spec import SpecError, set_status
 
 
@@ -72,7 +72,7 @@ def test_approved_refused(tmp_path):
 def test_schema_valid(tmp_path):
     repo, cfg = setup(tmp_path)
     res = build(repo, cfg, "spring", "garden")
-    assert validate(res.path / "garden.idml", ROOT / "seed" / "schema") == []
+    assert validate(res.path / "garden.idml", STARTER / "seed" / "schema") == []
 
 
 def test_schema_catches_bogus(tmp_path):
@@ -85,7 +85,7 @@ def test_schema_catches_bogus(tmp_path):
             if info.filename.startswith("Spreads/"):
                 data = data.replace(b"</Spread>", b"<Bogus/></Spread>")
             dst.writestr(info, data)
-    errors = validate(bad, ROOT / "seed" / "schema")
+    errors = validate(bad, STARTER / "seed" / "schema")
     assert errors
     assert any("Spreads/" in e for e in errors)
 
@@ -147,7 +147,7 @@ def test_io_missing_jing_raises_build_failed(tmp_path, monkeypatch):
     repo, cfg = setup(tmp_path)
     hide_jing(monkeypatch)
     error = expect_build_failed(lambda: build(repo, cfg, "spring", "garden"))
-    assert error.errors == ["install jing: sudo apt install jing"]
+    assert error.errors == [JING_MISSING]
     assert_no_temps(repo)
     folder = repo / "build" / "spring" / "garden"
     assert not folder.exists() or not any(path.is_dir() and len(path.name) == 16 for path in folder.iterdir())
@@ -161,7 +161,7 @@ def test_io_missing_jing_prints_and_continues(tmp_path, monkeypatch, capsys):
     captured = capsys.readouterr()
     assert code == 1
     assert "Traceback" not in captured.err
-    assert captured.err.count("install jing: sudo apt install jing") == 2
+    assert captured.err.count(JING_MISSING) == 2
     assert "spring/garden" in captured.err
     assert "spring/open-house" in captured.err
     assert_no_temps(repo)
@@ -520,17 +520,17 @@ def returned_errors(fn):
 
 def test_validate_bad_crc_names_the_part(tmp_path):
     bad = tmp_path / "bad.idml"
-    shutil.copy(ROOT / "seed" / "reference.idml", bad)
+    shutil.copy(STARTER / "seed" / "reference.idml", bad)
     break_member(bad, "designmap.xml", "crc")
-    errors = returned_errors(lambda: validate(bad, ROOT / "seed" / "schema"))
+    errors = returned_errors(lambda: validate(bad, STARTER / "seed" / "schema"))
     assert any(line.startswith("designmap.xml:") for line in errors)
 
 
 def test_validate_bad_deflate_names_the_part(tmp_path):
     bad = tmp_path / "bad.idml"
-    shutil.copy(ROOT / "seed" / "reference.idml", bad)
+    shutil.copy(STARTER / "seed" / "reference.idml", bad)
     break_member(bad, "designmap.xml", "deflate")
-    errors = returned_errors(lambda: validate(bad, ROOT / "seed" / "schema"))
+    errors = returned_errors(lambda: validate(bad, STARTER / "seed" / "schema"))
     assert any(line.startswith("designmap.xml:") for line in errors)
 
 
@@ -559,5 +559,5 @@ def test_validate_short_member_names_the_part(tmp_path, monkeypatch):
         return original(self, member, pwd)
 
     monkeypatch.setattr(zipfile.ZipFile, "read", read)
-    errors = returned_errors(lambda: validate(ROOT / "seed" / "reference.idml", ROOT / "seed" / "schema"))
+    errors = returned_errors(lambda: validate(STARTER / "seed" / "reference.idml", STARTER / "seed" / "schema"))
     assert any(line.startswith("designmap.xml:") for line in errors)
