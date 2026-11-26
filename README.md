@@ -18,7 +18,7 @@ The agent writes the same template and spec files, runs the same commands and sh
 
 makeready is made to be driven this way. Every command runs without prompts and reports in plain text, the inputs are files an agent can read and diff, the same inputs always give the same build, and the pre-print checks catch mistakes before anyone opens InDesign. When a job needs something the compiler doesn't write yet, the agent can add it in a `hooks.py` beside the template, which the build runs for every frame it writes.
 
-The `makeready-indesign` agent skill, kept in [powerful-user/skills](https://github.com/powerful-user/skills), teaches an agent this workflow: ask about missing measurements, preview before building, read the build back and check it against the brief. [Setup](#setup) shows how to add it to your agent.
+The `makeready` agent skill, kept in [powerful-user/skills](https://github.com/powerful-user/skills), teaches an agent this workflow: ask about missing measurements, preview before building, read the build back and check it against the brief. [Setup](#setup) shows how to add it to your agent.
 
 ### By hand
 
@@ -107,7 +107,7 @@ The files land in `my-job/build/example/`. For regular use, `uv tool install git
 To have your agent drive it, add the skill:
 
 ```
-npx skills add powerful-user/skills --skill makeready-indesign
+npx skills add powerful-user/skills --skill makeready
 ```
 
 The skill teaches the agent the workflow, and how to install `makeready` if it isn't there.
